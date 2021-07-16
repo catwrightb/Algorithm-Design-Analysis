@@ -1,4 +1,4 @@
-package Week1.ProvidedCode;
+package Week1.Week1_ProvidedCode;
 
 /**
    Interface representing a resource that can be acquired and released

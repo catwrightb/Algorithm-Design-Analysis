@@ -1,7 +1,7 @@
-package Week1.ProvidedCode; /**
+package Week1.Week1_ProvidedCode; /**
    A class that represents a philosopher for the Dining Philosophers
    problem (remove sleep and try/catch to make problem more evident)
-   @see Week1.ProvidedCode.DiningPhilosophersSolution.java
+   @see Week1.Week1_ProvidedCode.DiningPhilosophersSolution.java
 */
 import java.util.Random;
 

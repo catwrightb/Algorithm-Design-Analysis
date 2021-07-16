@@ -1,6 +1,6 @@
-package Week1.ProvidedCode; /**
+package Week1.Week1_ProvidedCode; /**
    A class that represents a client in a number guessing game
-   @see Week1.ProvidedCode.GuessServer.java
+   @see Week1.Week1_ProvidedCode.GuessServer.java
 */
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

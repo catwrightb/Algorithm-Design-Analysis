@@ -1,4 +1,4 @@
-package Week1.ProvidedCode; /**
+package Week1.Week1_ProvidedCode; /**
    A class that represents a server in a number guessing game where
    Week1.Material.GuessClient objects connect to this Week1.Material.GuessServer and try to guess
    a random integer value between min (incl) and max (excl)

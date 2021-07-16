@@ -19,6 +19,7 @@ public class Swappable_AvoidingDeadlock<E> {
     //we need threads to acquire monitors in the same order each time
     public void swap(Swappable_AvoidingDeadlock<E> other)
     {
+        //we need synchrohized on the code instead of the method
         //check which hashCode is smaller between threads
         // if A is smaller then B
         if (this.hashCode() < other.hashCode()){

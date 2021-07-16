@@ -1,4 +1,4 @@
-package Week1.ProvidedCode;
+package Week1.Week1_ProvidedCode;
 
 /**
    A class that demonstrates the lost update problem in concurrency
