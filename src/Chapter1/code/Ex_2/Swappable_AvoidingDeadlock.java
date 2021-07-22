@@ -1,4 +1,4 @@
-package Week1.code.Ex_2;
+package Chapter1.code.Ex_2;
 
 public class Swappable_AvoidingDeadlock<E> {
     private E element;

@@ -1,4 +1,4 @@
-package Week1.Week1_ProvidedCode; /**
+package Chapter1.ProvidedCode; /**
    A class that represents a server in a number guessing game where
    Week1.Material.GuessClient objects connect to this Week1.Material.GuessServer and try to guess
    a random integer value between min (incl) and max (excl)
@@ -47,13 +47,11 @@ public class GuessServer
       {  while (!stopRequested)
          {  // block until the next client requests a connection
             // note that the server socket could set an accept timeout
-            Socket socket = serverSocket.accept();
-            System.out.println("Connection made with "
-               + socket.getInetAddress());
+            Socket socket = serverSocket.accept(); //->can set a time out parameter
+            System.out.println("Connection made with " + socket.getInetAddress());
             // start a game with this connection, note that a server
             // might typically keep a reference to each game
-            GuessGame game = new GuessGame(socket,
-               generator.nextInt(max-min)+min);
+            GuessGame game = new GuessGame(socket, generator.nextInt(max-min)+min);
             Thread thread = new Thread(game);
             thread.start();
          }
@@ -95,7 +93,7 @@ public class GuessServer
          BufferedReader br; // input stream from client
          try
          {  // create an autoflush output stream for the socket
-            pw = new PrintWriter(socket.getOutputStream(), true);
+            pw = new PrintWriter(socket.getOutputStream(), true); //-> true set autoFlush to occur
             // create a buffered input stream for this socket
             br = new BufferedReader(new InputStreamReader(
                socket.getInputStream()));
@@ -104,7 +102,7 @@ public class GuessServer
                + (max-1) + " inclusive");
             int guess = min-1;
             do
-            {  String clientGuess = br.readLine();
+            {  String clientGuess = br.readLine(); //-> if encountering block no response could be occuring
                String response;
                if (clientGuess == null)
                   response = "Nothing entered, try again";

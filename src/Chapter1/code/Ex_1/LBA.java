@@ -1,4 +1,4 @@
-package Week1.code.Ex_1;
+package Chapter1.code.Ex_1;
 
 import java.util.ArrayList;
 import java.util.List;

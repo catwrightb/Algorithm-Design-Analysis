@@ -1,4 +1,4 @@
-package Week1.Week1_ProvidedCode; /**
+package Chapter1.ProvidedCode; /**
    A class that represents a client in a number guessing game
    @see Week1.Week1_ProvidedCode.GuessServer.java
 */
@@ -19,23 +19,25 @@ public class GuessClient
    }
    
    public void startClient()
-   {  Socket socket = null;
+   {
+      Socket socket = null;
       Scanner keyboardInput = new Scanner(System.in);
       try
-      {  socket = new Socket(HOST_NAME, HOST_PORT);
+      {
+         socket = new Socket(HOST_NAME, HOST_PORT);
       }
       catch (IOException e)
       {  System.err.println("Client could not make connection: " + e);
          System.exit(-1);
       }
+
       PrintWriter pw; // output stream to server
       BufferedReader br; // input stream from server
       try
       {  // create an autoflush output stream for the socket
          pw = new PrintWriter(socket.getOutputStream(), true);
          // create a buffered input stream for this socket
-         br = new BufferedReader(new InputStreamReader(
-            socket.getInputStream()));
+         br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
          // play the game until value is correctly guessed
          boolean finished = false;
          do
