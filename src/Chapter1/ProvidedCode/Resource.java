@@ -1,5 +1,4 @@
-package Week1.Week1_ProvidedCode;
-
+package Chapter1.ProvidedCode;
 /**
    Interface representing a resource that can be acquired and released
    @see DiningPhilosophersSolution.java

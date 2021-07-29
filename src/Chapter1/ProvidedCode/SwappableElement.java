@@ -1,4 +1,4 @@
-package Week1.Week1_ProvidedCode;
+package Chapter1.ProvidedCode;
 
 /**
    A class that represents an element of generic type E that includes

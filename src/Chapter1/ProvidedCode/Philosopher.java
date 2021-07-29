@@ -1,4 +1,4 @@
-package Week1.Week1_ProvidedCode; /**
+package Chapter1.ProvidedCode; /**
    A class that represents a philosopher for the Dining Philosophers
    problem (remove sleep and try/catch to make problem more evident)
    @see Week1.Week1_ProvidedCode.DiningPhilosophersSolution.java

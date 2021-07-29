@@ -1,4 +1,4 @@
-package Week1.Week1_ProvidedCode;
+package Chapter1.ProvidedCode;
 
 /**
    An implementation of the dining philosophers problem using a

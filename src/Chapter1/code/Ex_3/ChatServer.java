@@ -11,6 +11,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+//for assignment need two ports
+//so we need two server sockets
+//and three threads listening
 
 public class ChatServer {
 

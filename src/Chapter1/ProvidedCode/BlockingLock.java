@@ -1,4 +1,4 @@
-package Week1.Week1_ProvidedCode;
+package Chapter1.ProvidedCode;
 
 /**
    A class that represents a blocking (rather than spinning) lock
