@@ -1,6 +1,8 @@
 package Chapter1.code.Ex_3;
 
 
+import sun.jvm.hotspot.runtime.Threads;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,15 +17,19 @@ import java.util.List;
 //so we need two server sockets
 //and three threads listening
 
-public class ChatServer {
+public class ChatServer implements Runnable{
 
     //stop the client connection
     private boolean stopRequested;
     //port number for socket
-    public static final int PORT = 7777;
-    //List of all connected chat clients
-    public List<ChatConnection> listChatConnection = new ArrayList<ChatConnection>();
+    public static final int INPUT_PORT = 7777;
+    public static final int OUTPUT_PORT = 8888;
 
+    protected ServerSocket serverSocket1 = null;
+    protected ServerSocket serverSocket2 = null;
+
+    public List<ClientConnection> listClientConnection = new ArrayList<ClientConnection>();
+    public Thread testThread;
 
     public ChatServer()
     {
@@ -31,16 +37,22 @@ public class ChatServer {
     }
 
     //starts the server
-    public void startServer()
+    //only connects client to host
+    public void startServer ()
     {
         //start the server or receive a error upon start up
         stopRequested = false;
-        ServerSocket serverSocket = null;
+
+
         try
         {
-            serverSocket = new ServerSocket(PORT);
-            System.out.println("Server started at "
-                    + InetAddress.getLocalHost() + " on port " + PORT);
+            serverSocket1 = new ServerSocket(INPUT_PORT);
+
+            serverSocket2 = new ServerSocket(OUTPUT_PORT);
+            System.out.println("Server to accept clients started at "
+                    + InetAddress.getLocalHost() + " on port " + serverSocket1.getLocalPort());
+            System.out.println("Server to sent processed task to clients started at "
+                    + InetAddress.getLocalHost() + " on port " + serverSocket2.getLocalPort());
         }
         catch (IOException e)
         {
@@ -48,32 +60,13 @@ public class ChatServer {
             System.exit(-1);
         }
 
-        //while stopRequested in false continue in the loop keeping the server running
-        try
-        {
-            while (!stopRequested) {
-                Socket socket = serverSocket.accept(); //->can set a time out parameter here in desired
-                System.out.println("Connection made with " + socket.getInetAddress());
-                // start a chat with this connection
-                ChatConnection chatConnection = new ChatConnection(socket);
-                //add the new connection to the list
-                listChatConnection.add(chatConnection);
-                //start new thread for the connection
-                Thread thread = new Thread(chatConnection);
-                thread.start();
-            }
-            //when stopRequest is true closing server
-            serverSocket.close();
-        } catch (IOException e) {
-            System.err.println("Can't accept client connection: " + e);
-        }
-        System.out.println("Server finishing");
+
     }
 
     //method to broadcast all chat client messages to other clients
     //called from the chatConnection object below
     public void broadcastMessage(String message){
-        for (ChatConnection chat:listChatConnection) {
+        for (ClientConnection chat: listClientConnection) {
             chat.sendMessage(message);
         }
 
@@ -82,24 +75,63 @@ public class ChatServer {
     public static void main(String[] args) {
         ChatServer server = new ChatServer();
         server.startServer();
+        Thread t1 = new Thread(server);
+        t1.start();
     }
 
+    @Override
+    public void run() {
+        //while stopRequested in false continue in the loop keeping the server running
+        try
+        {
+            while (!stopRequested) {
+                Socket socket1 = serverSocket1.accept(); //->can set a time out parameter here in desired
+                Socket socket2 = serverSocket2.accept();
+
+                //confirms that connection has been made
+                System.out.println("Connection made with " + socket1.getInetAddress() + " on port " +socket1.getLocalPort());
+                System.out.println("Connection made with " + socket2.getInetAddress()+" on port " +socket2.getLocalPort());
+
+                // start a clientConnect instance with this connection
+                ClientConnection clientConnection = new ClientConnection(socket1, socket2);
+                //add the new connection to the list
+                listClientConnection.add(clientConnection);
+                //start new thread for the client connection
+                Thread thread = new Thread(clientConnection);
+                thread.start();
+
+            }
+            //when stopRequest is true closing server
+            serverSocket1.close();
+            serverSocket2.close();
+        } catch (IOException e) {
+            System.err.println("Can't accept client connection: " + e);
+        }
+        System.out.println("Server finishing");
+    }
+
+
+
     // inner class that represents a single chat client across a socket
-    private class ChatConnection implements Runnable
+    private class ClientConnection implements Runnable
     {
         //value to end connection which must be typed by client and recognized by by the server
         private String value = "QUIT";
         private Socket socket; // socket for client/server communication
+        private Socket socket2;
         PrintWriter pw; // output stream to client
+        BufferedReader br; // input stream from client
+
+
         private Boolean closeChat = false; //close chat boolean
 
-
-        public ChatConnection(Socket socket)
+        public ClientConnection(Socket socket1, Socket socket2)
         {
             try{
-                this.socket = socket;
-                pw = new PrintWriter(socket.getOutputStream(), true); //-> true set autoFlush to occur
-
+                //this.socket = socket1;
+                pw = new PrintWriter(socket2.getOutputStream(), true); //-> true set autoFlush to occur
+                br = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
+                pw.println("You are connected to the chat group! Type QUIT to exit.");
             }catch (IOException e){
                 System.out.println(e);
             }
@@ -109,20 +141,19 @@ public class ChatServer {
 
         public void run()
         {
-            BufferedReader br; // input stream from client
+
             try
             {
-                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                //System.out.println("Running run method server");
-                pw.println("You are connected to the chat group! Type QUIT to exit.");
 
                 do
                 {
                     String clientRequest = br.readLine(); //-> if encountering block no response could be occurring here
+                    System.out.println(clientRequest);
 
                     if (!clientRequest.equals(value)) {
+
                         broadcastMessage(clientRequest);
+
                     }
                     else {
                         closeChat = true;
@@ -140,10 +171,11 @@ public class ChatServer {
             }
         }
 
-        //method to sendMessages/write to all clients
+        //method to sendMessages/write to all clients from the input
         //called from the Broadcast message method
         public void sendMessage(String message){
             pw.println(message);
+
         }
     }
 }

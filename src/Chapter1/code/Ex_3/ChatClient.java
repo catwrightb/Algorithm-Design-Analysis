@@ -9,12 +9,13 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ChatClient implements Runnable{
-
     //change host name to IP address of server for computer to computer running
     public static final String HOST_NAME = "localhost";
-    public static final int HOST_PORT = 7777; // host port number
+    public static final int OUTPUT_PORT = 7777; // host port number
+    public static final int INPUT_PORT = 8888; // host port number
 
-    public Socket socket = null;
+    public Socket socket1 = null;
+    public Socket socket2 = null;
     //isConnected keeps both threads running till connection ends
     public Boolean isConnected = true;
 
@@ -28,9 +29,11 @@ public class ChatClient implements Runnable{
         ChatClient client = new ChatClient();
         //create socket for client
         client.socketOpen();
+
         //create 2nd thread
         Thread secondThread = new Thread(client);
         secondThread.start();
+
         //start client
         client.startClient();
 
@@ -40,11 +43,11 @@ public class ChatClient implements Runnable{
     //runs 2nd thread
     //2nd thread responsible for getting server responses and printing them to the client
     public void run(){
-        //System.out.println("run client1");
+
         BufferedReader br; // input stream from server
 
         try{
-            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            br = new BufferedReader(new InputStreamReader(socket2.getInputStream()));
             do {
                 try {
                     String serverResponse = br.readLine();
@@ -70,7 +73,8 @@ public class ChatClient implements Runnable{
     public void socketOpen(){
         try
         {
-            socket = new Socket(HOST_NAME, HOST_PORT);
+            socket1 = new Socket(HOST_NAME, OUTPUT_PORT);
+            socket2 = new Socket(HOST_NAME, INPUT_PORT);
         }
         catch (IOException e)
         {  System.err.println("Client could not make connection: " + e);
@@ -88,13 +92,14 @@ public class ChatClient implements Runnable{
         PrintWriter pw; // output stream to server
 
         try
-        {  // create an autoflush output stream for the socket
-            pw = new PrintWriter(socket.getOutputStream(), true);
+        {
+            // create an autoflush output stream for the socket
+            pw = new PrintWriter(socket1.getOutputStream(), true);
             // create a buffered input stream for this socket
 
             do
             {
-                 // get user input and sent it to server
+                // get user input and sent it to server
                 String input = keyboardInput.nextLine();
                 pw.println(input);
 
@@ -108,7 +113,8 @@ public class ChatClient implements Runnable{
             //close printwriter and socket
             pw.close();
             //br.close();
-            socket.close();
+            socket1.close();
+            socket2.close();
         }
         catch (IOException e)
         {  System.err.println("Client error with game: " + e);
